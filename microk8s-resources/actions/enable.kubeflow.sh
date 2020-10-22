@@ -268,55 +268,17 @@ def main():
     # user to specify a full charm store URL if they'd like, such as
     # `cs:kubeflow-lite-123`.
     if args['bundle'] == 'full':
-        bundle = 'cs:kubeflow-206'
+        bundle = 'cs:kubeflow-219'
         bundle_type = 'full'
-        password_overlay = {
-            "applications": {
-                "dex-auth": {
-                    "options": {"static-username": "admin", "static-password": args['password']}
-                },
-                "katib-db": {"options": {"root_password": get_random_pass()}},
-                "oidc-gatekeeper": {"options": {"client-secret": get_random_pass()}},
-                "pipelines-api": {"options": {"minio-secret-key": "minio123"}},
-                "pipelines-db": {"options": {"root_password": get_random_pass()}},
-            }
-        }
     elif args['bundle'] == 'lite':
-        bundle = 'cs:~kubeflow-charmers/bundle/kubeflow-lite-6'
+        bundle = 'cs:kubeflow-lite-6'
         bundle_type = 'lite'
-        password_overlay = {
-            "applications": {
-                "dex-auth": {
-                    "options": {"static-username": "admin", "static-password": args['password']}
-                },
-                "oidc-gatekeeper": {"options": {"client-secret": get_random_pass()}},
-                "pipelines-api": {"options": {"minio-secret-key": "minio123"}},
-                "pipelines-db": {"options": {"root_password": get_random_pass()}},
-            }
-        }
     elif args['bundle'] == 'edge':
-        bundle = 'cs:~kubeflow-charmers/bundle/kubeflow-edge-12'
+        bundle = 'cs:kubeflow-edge-6'
         bundle_type = 'edge'
-        password_overlay = {
-            "applications": {
-                "pipelines-api": {"options": {"minio-secret-key": "minio123"}},
-                "pipelines-db": {"options": {"root_password": get_random_pass()}},
-            }
-        }
     else:
         bundle = args['bundle']
         bundle_type = 'full'
-        password_overlay = {
-            "applications": {
-                "dex-auth": {
-                    "options": {"static-username": "admin", "static-password": args['password']}
-                },
-                "katib-db": {"options": {"root_password": get_random_pass()}},
-                "oidc-gatekeeper": {"options": {"client-secret": get_random_pass()}},
-                "pipelines-api": {"options": {"minio-secret-key": "minio123"}},
-                "pipelines-db": {"options": {"root_password": get_random_pass()}},
-            }
-        }
 
     for service in [
         "dns",
@@ -361,11 +323,7 @@ def main():
         juju("bootstrap", "microk8s", "uk8s")
         juju("add-model", "kubeflow", "microk8s")
 
-    with tempfile.NamedTemporaryFile("w+") as f:
-        json.dump(password_overlay, f)
-        f.flush()
-
-        juju("deploy", bundle, "--channel", args['channel'], "--overlay", f.name)
+    juju("deploy", bundle, "--channel", args['channel'])
 
     print("Kubeflow deployed.")
     print("Waiting for operator pods to become ready.")
