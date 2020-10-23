@@ -206,7 +206,7 @@ def get_hostname():
 def main():
     args = {
         'bundle': os.environ.get("KUBEFLOW_BUNDLE") or "cs:kubeflow-213",
-        'channel': os.environ.get("KUBEFLOW_CHANNEL") or "stable",
+        'channel': os.environ.get("KUBEFLOW_CHANNEL") or "edge",
         'debug': os.environ.get("KUBEFLOW_DEBUG") or "false",
         'hostname': os.environ.get("KUBEFLOW_HOSTNAME") or None,
         'ignore_min_mem': os.environ.get("KUBEFLOW_IGNORE_MIN_MEM") or "false",
